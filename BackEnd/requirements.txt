@@ -1,0 +1,8 @@
+flask
+flask-cors
+groq
+transformers
+torch
+python-dotenv
+mysql-connector-python
+gunicorn

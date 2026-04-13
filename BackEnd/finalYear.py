@@ -1,7 +1,6 @@
 import os
 import re
 from datetime import datetime
-import mysql.connector
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
@@ -9,33 +8,42 @@ from transformers import pipeline
 from dotenv import load_dotenv
 from mysql.connector import pooling
 
+# Load .env only for local testing. 
+# On Render/Aiven, these will be pulled from the dashboard environment settings.
 load_dotenv()
 
 app = Flask(__name__)
 CORS(app)
 
-# 1. ROBUST DATABASE CONNECTION
+# 1. DYNAMIC DATABASE CONNECTION (Updated for Aiven)
 db_config = {
-    "host": "localhost",
-    "user": "root", 
-    "password": "SQLHarish", 
-    "database": "emote_db"
+    "host": os.environ.get("DB_HOST", "mysql-274b11d4-harishjhr05-a436.e.aivencloud.com"),
+    "user": os.environ.get("DB_USER", "avnadmin"), 
+    "password": os.environ.get("DB_PASSWORD"), # Set this in Render Dashboard
+    "database": os.environ.get("DB_NAME", "defaultdb"),
+    "port": int(os.environ.get("DB_PORT", 15296))
 }
 
 # Use pooling to prevent "Lost Connection" errors
-connection_pool = pooling.MySQLConnectionPool(
-    pool_name="emotepool",
-    pool_size=5,
-    pool_reset_session=True,
-    **db_config
-)
+try:
+    connection_pool = pooling.MySQLConnectionPool(
+        pool_name="emotepool",
+        pool_size=5,
+        pool_reset_session=True,
+        **db_config
+    )
+    print("Successfully connected to Aiven MySQL")
+except Exception as e:
+    print(f"Database Connection Error: {e}")
 
 def get_db_connection():
     return connection_pool.get_connection()
 
 # 2. AI MODELS
 classifier = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion")
-client = Groq(api_key=os.getenv("ProjectDone"))
+
+# API Key handled via Environment Variable for security
+client = Groq(api_key=os.environ.get("API_KEY"))
 
 def clean_ai_text(text):
     text = re.sub(r':[a-z_]+:', '', text)
@@ -81,28 +89,23 @@ def analyze():
         text_sentiment = "neutral"
         if user_text:
             text_analysis = classifier(user_text.lower())[0]
-            text_sentiment = text_analysis['label'] # joy, sadness, anger, fear, love, surprise
+            text_sentiment = text_analysis['label'] 
 
-        # 3. AFFECTIVE LOGIC ENGINE (The "Brain")
+        # 3. AFFECTIVE LOGIC ENGINE
         masking_note = ""
         negative_emotions = ['sadness', 'fear', 'anger']
         
-        # Logic A: Masking Detection (Smile + Sad Words)
         if face_mood == "Happy" and text_sentiment in negative_emotions:
             masking_note = "User is smiling but their words suggest pain. Acknowledge their bravery in masking."
-        
-        # Logic B: Stoic Struggle (Neutral Face + Sad Words)
         elif face_mood == "Neutral" and text_sentiment in negative_emotions:
             masking_note = "User is keeping a straight face but feeling low. Validate their internal strength."
 
-        # Logic C: Emotional Spiral (Check DB for 3 consecutive negative entries)
         cursor.execute("SELECT is_positive FROM vibe_history ORDER BY timestamp DESC LIMIT 3")
         history_vibes = cursor.fetchall()
         is_spiral = len(history_vibes) >= 3 and all(not h['is_positive'] for h in history_vibes)
         
         recall_win = ""
         if is_spiral:
-            # Logic D: Recall a "Win" from the past to break the spiral
             cursor.execute("SELECT user_text FROM vibe_history WHERE is_positive = 1 ORDER BY RAND() LIMIT 1")
             past_happy = cursor.fetchone()
             if past_happy:
@@ -116,7 +119,7 @@ def analyze():
         system_prompt = (
             f"Role: High-EQ Personal Mentor. Current Stats: Face={face_mood}, Tone={text_sentiment}, Source={input_source}. "
             f"Observation: {masking_note} {recall_win} Context: {chat_context}. "
-            "STRICT: Max 20 words. No metadata/emojis. No gendered terms. Stay in the flow. Respond only in English."
+            "STRICT: Max 20 words. No metadata/emojis. No gendered terms. Stay in the flow. Respond only in English. No persistant storage of names."
         )
 
         response = client.chat.completions.create(
@@ -142,4 +145,6 @@ def analyze():
         db.close()
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    # Use environment variable for port to satisfy Render's requirements
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
