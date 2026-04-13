@@ -17,69 +17,75 @@
         body, html { margin: 0; padding: 0; background: #000; font-family: 'Inter', sans-serif; color: #fff; height: 100%; overflow: hidden; }
         #phone-wrapper { width: 100%; height: 100%; background: var(--bg-current, var(--bg-neutral)); transition: background 1.5s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* Privacy Pop-up Styling */
-        #privacy-modal { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
-        .modal-content { background: #111; border: 1px solid var(--accent); padding: 30px; border-radius: 30px; max-width: 400px; text-align: center; box-shadow: 0 0 50px rgba(6, 182, 212, 0.2); }
+        /* Privacy Shield Pop-up - Centered and slick */
+        #privacy-modal { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(15px); }
+        .modal-content { background: #0f172a; border: 1px solid rgba(6, 182, 212, 0.3); padding: 35px; border-radius: 40px; max-width: 350px; text-align: center; box-shadow: 0 0 60px rgba(6, 182, 212, 0.15); transform: scale(0.9); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #privacy-modal.show .modal-content { transform: scale(1); }
 
-        #onboarding { position: absolute; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
+        /* Onboarding Styles */
+        #onboarding { position: absolute; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; transition: opacity 0.8s ease; }
         .fade-in { animation: fadeIn 1.5s ease forwards; opacity: 0; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        #app { display: none; flex-direction: column; width: 100%; height: 100%; padding: 15px; gap: 12px; box-sizing: border-box; }
-        .panel-vision { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .panel-advice { flex: 0.8; background: var(--glass); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        .panel-input { flex: 0.7; background: var(--glass); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
+        /* App Layout (Intact / Mobile-First) */
+        #app { display: none; flex-direction: column; width: 100%; height: 100%; padding: 20px; gap: 15px; box-sizing: border-box; }
+        .panel-vision { flex: 1.6; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        .panel-advice { flex: 0.8; background: var(--glass); backdrop-filter: blur(30px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); padding: 20px; display: flex; align-items: center; justify-content: center; }
+        .panel-input { flex: 0.6; background: var(--glass); backdrop-filter: blur(30px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); padding: 15px; display: flex; flex-direction: column; justify-content: center; }
 
-        .view-circle { width: 50vw; height: 50vw; max-width: 260px; max-height: 260px; border-radius: 50%; overflow: hidden; border: 3px solid #fff; transition: all 0.8s ease; }
+        .view-circle { width: 55vw; height: 55vw; max-width: 250px; max-height: 250px; border-radius: 50%; overflow: hidden; border: 4px solid #fff; transition: all 1s ease; box-shadow: 0 0 40px rgba(0,0,0,0.6); }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        .control-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
-        .control-btn.active { background: var(--accent); box-shadow: 0 0 20px var(--accent); }
+        .control-btn { width: 55px; height: 55px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); font-size: 20px; transition: 0.3s; }
+        .control-btn.active { background: var(--accent); border-color: white; box-shadow: 0 0 25px var(--accent); }
         
-        #user-text { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 12px; width: 100%; outline: none; text-align: center; }
-        #mood-label { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.3em; margin-top: 10px; color: var(--accent); }
+        #user-text { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 14px; width: 100%; outline: none; text-align: center; color: white; transition: 0.3s; }
+        #user-text:focus { border-color: var(--accent); background: rgba(255,255,255,0.08); }
+        #mood-label { font-size: 0.75rem; font-weight: 900; letter-spacing: 0.4em; margin-top: 15px; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
     </style>
 </head>
 <body class="theme-neutral">
 
     <div id="privacy-modal">
         <div class="modal-content">
-            <div class="text-4xl mb-4">🛡️</div>
-            <h2 class="text-xl font-bold mb-2">Privacy Shield</h2>
-            <p class="text-sm text-slate-400 mb-6 leading-relaxed">
-                Your privacy is our priority. Facial analysis and neural chat history stay strictly on your device. No biometric data is ever stored on our servers.
+            <div class="text-5xl mb-5">🛡️</div>
+            <h2 class="text-2xl font-black mb-3 text-cyan-400">Integrity First</h2>
+            <p class="text-xs text-slate-300 mb-8 leading-relaxed uppercase tracking-wider">
+                Facial Biometrics & Neural conversations are processed locally. No data leaves this device. 
             </p>
-            <button id="agree-btn" class="bg-cyan-500 text-white w-full py-3 rounded-full font-bold hover:bg-cyan-400 transition">I Understand</button>
+            <button id="agree-btn" class="bg-white text-black w-full py-4 rounded-full font-black hover:bg-cyan-400 transition-all active:scale-95">SECURE ACCESS</button>
         </div>
     </div>
 
     <div id="phone-wrapper">
         <div id="onboarding">
             <h1 class="text-5xl font-black mb-4 fade-in">Emote Bro 🫣</h1>
-            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase fade-in text-sm" style="animation-delay: 0.5s">Emote to Demote your feelings</p>
-            <button id="launch-btn" class="mt-12 bg-white text-black px-10 py-4 rounded-full font-bold active:scale-95 transition-all fade-in" style="animation-delay: 1s">LAUNCH ME</button>
+            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase fade-in text-xs max-w-xs mx-auto" style="animation-delay: 0.5s">
+                Emote to Demote your feelings
+            </p>
+            <button id="launch-btn" class="mt-14 bg-white text-black px-12 py-4 rounded-full font-black active:scale-90 transition-all fade-in" style="animation-delay: 1s">LAUNCH ME</button>
         </div>
 
         <div id="app">
             <div class="panel-vision">
                 <div class="view-circle" id="borderFrame"><video id="webcam" autoplay playsinline muted></video></div>
-                <div id="mood-label">Initializing...</div>
-                <div class="flex gap-6 mt-4">
-                    <button id="camBtn" class="control-btn">📷</button>
-                    <button id="micBtn" class="control-btn">🎤</button>
+                <div id="mood-label">CALIBRATING...</div>
+                <div class="flex gap-8 mt-6">
+                    <button id="camBtn" class="control-btn" title="Toggle Vision">📷</button>
+                    <button id="micBtn" class="control-btn" title="Vocal Sync">🎤</button>
                 </div>
             </div>
 
             <div class="panel-advice">
-                <p id="advice-display" class="text-md text-center font-medium italic text-slate-200 px-4">System Ready...</p>
+                <p id="advice-display" class="text-lg text-center font-medium italic text-slate-200 px-6 leading-relaxed">Neural system ready for input...</p>
             </div>
 
             <div class="panel-input">
-                <div class="flex justify-between items-center mb-2 px-2">
-                    <h2 class="text-[9px] font-black tracking-widest text-slate-500 uppercase">Neural Input</h2>
-                    <button onclick="clearMemory()" class="text-[9px] text-red-500 font-bold uppercase">Clear History</button>
+                <div class="flex justify-between items-center mb-3 px-2">
+                    <h2 class="text-[10px] font-black tracking-widest text-slate-500 uppercase">Input Terminal</h2>
+                    <button onclick="clearMemory()" class="text-[9px] text-red-500 font-black tracking-tighter uppercase opacity-60">Reset</button>
                 </div>
-                <input type="text" id="user-text" placeholder="Share your thoughts...">
+                <input type="text" id="user-text" placeholder="Share your inner state...">
             </div>
         </div>
     </div>
@@ -91,22 +97,10 @@
     let camStream = null, micStream = null, mediaRecorder, audioChunks = [], voteBuffer = [];
     let lastLockInUpdate = 0, lockInDuration = 1800;
 
+    // Update with your Render link
     const BACKEND_URL = "https://YOUR-RENDER-URL.onrender.com/analyze";
 
-    // Privacy Logic: Only show if they haven't agreed before
-    window.onload = () => {
-        if (!localStorage.getItem('privacy_agreed')) {
-            document.getElementById('privacy-modal').style.display = 'flex';
-        }
-    };
-
-    document.getElementById('agree-btn').addEventListener('click', () => {
-        localStorage.setItem('privacy_agreed', 'true');
-        document.getElementById('privacy-modal').style.opacity = '0';
-        setTimeout(() => document.getElementById('privacy-modal').style.display = 'none', 500);
-    });
-
-    document.getElementById('launch-btn').addEventListener('click', async () => {
+    const launchApp = async () => {
         document.getElementById('onboarding').style.opacity = '0';
         setTimeout(() => { 
             document.getElementById('onboarding').remove(); 
@@ -118,8 +112,28 @@
             baseOptions: { modelAssetPath: "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task", delegate: "GPU" },
             outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
         });
+    };
+
+    // Logical Flow: Launch -> Privacy (once) -> App
+    document.getElementById('launch-btn').addEventListener('click', () => {
+        if (!localStorage.getItem('privacy_agreed')) {
+            document.getElementById('privacy-modal').style.display = 'flex';
+            setTimeout(() => document.getElementById('privacy-modal').classList.add('show'), 10);
+        } else {
+            launchApp();
+        }
     });
 
+    document.getElementById('agree-btn').addEventListener('click', () => {
+        localStorage.setItem('privacy_agreed', 'true');
+        document.getElementById('privacy-modal').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('privacy-modal').remove();
+            launchApp();
+        }, 500);
+    });
+
+    // Interaction & Detection Logic
     document.getElementById('camBtn').addEventListener('click', async () => {
         if (camStream) {
             camStream.getTracks().forEach(t => t.stop()); camStream = null;
@@ -176,7 +190,7 @@
             const data = await res.json();
             typeWriter(data.advice);
         } catch (err) {
-            typeWriter("Connecting to neural core...");
+            typeWriter("System bottleneck detected. Reconnecting...");
         }
     }
 
