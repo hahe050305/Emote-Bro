@@ -15,67 +15,55 @@
         .theme-surprised { --bg-current: #24180a; --accent: #f59e0b; }
         
         body, html { margin: 0; padding: 0; background: #000; font-family: 'Inter', sans-serif; color: #fff; height: 100%; overflow: hidden; }
-        
         #phone-wrapper { width: 100%; height: 100%; background: var(--bg-current, var(--bg-neutral)); transition: background 1.5s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         
-        /* Onboarding - Centered subheading fix */
+        /* Privacy Pop-up Styling */
+        #privacy-modal { position: fixed; inset: 0; z-index: 100; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(10px); }
+        .modal-content { background: #111; border: 1px solid var(--accent); padding: 30px; border-radius: 30px; max-width: 400px; text-align: center; box-shadow: 0 0 50px rgba(6, 182, 212, 0.2); }
+
         #onboarding { position: absolute; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; }
         .fade-in { animation: fadeIn 1.5s ease forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Main Intact Layout */
-        #app { 
-            display: none; 
-            flex-direction: column; 
-            width: 100%; 
-            height: 100%; 
-            padding: 15px;
-            gap: 12px;
-            box-sizing: border-box;
-        }
-        
-        @media (min-width: 1024px) {
-            #app { grid-template-columns: 320px 1fr 320px; flex-direction: row; align-items: stretch; }
-        }
-
-        /* Responsive Panel Sizes for "No Scroll" layout */
-        .panel-vision { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+        #app { display: none; flex-direction: column; width: 100%; height: 100%; padding: 15px; gap: 12px; box-sizing: border-box; }
+        .panel-vision { flex: 1.5; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .panel-advice { flex: 0.8; background: var(--glass); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .panel-input { flex: 0.7; background: var(--glass); backdrop-filter: blur(20px); border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; display: flex; flex-direction: column; justify-content: space-between; }
 
-        /* Circular Vision Frame */
-        .view-circle { 
-            width: 50vw; height: 50vw; 
-            max-width: 260px; max-height: 260px;
-            border-radius: 50%; overflow: hidden; border: 3px solid #fff; 
-            box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; 
-            transition: all 0.8s ease;
-        }
+        .view-circle { width: 50vw; height: 50vw; max-width: 260px; max-height: 260px; border-radius: 50%; overflow: hidden; border: 3px solid #fff; transition: all 0.8s ease; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        .control-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-        .control-btn.active { background: var(--accent); color: white; border-color: white; box-shadow: 0 0 20px var(--accent); }
+        .control-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); }
+        .control-btn.active { background: var(--accent); box-shadow: 0 0 20px var(--accent); }
         
-        #user-text { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 12px; width: 100%; outline: none; text-align: center; font-size: 0.9rem; }
-        #mood-label { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.3em; text-transform: uppercase; margin-top: 10px; color: var(--accent); text-shadow: 0 0 10px var(--accent); }
+        #user-text { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 12px; width: 100%; outline: none; text-align: center; }
+        #mood-label { font-size: 0.7rem; font-weight: 900; letter-spacing: 0.3em; margin-top: 10px; color: var(--accent); }
     </style>
 </head>
 <body class="theme-neutral">
+
+    <div id="privacy-modal">
+        <div class="modal-content">
+            <div class="text-4xl mb-4">🛡️</div>
+            <h2 class="text-xl font-bold mb-2">Privacy Shield</h2>
+            <p class="text-sm text-slate-400 mb-6 leading-relaxed">
+                Your privacy is our priority. Facial analysis and neural chat history stay strictly on your device. No biometric data is ever stored on our servers.
+            </p>
+            <button id="agree-btn" class="bg-cyan-500 text-white w-full py-3 rounded-full font-bold hover:bg-cyan-400 transition">I Understand</button>
+        </div>
+    </div>
+
     <div id="phone-wrapper">
         <div id="onboarding">
             <h1 class="text-5xl font-black mb-4 fade-in">Emote Bro 🫣</h1>
-            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase fade-in text-sm w-full max-w-xs mx-auto" style="animation-delay: 0.5s">
-                Emote to Demote your feelings
-            </p>
+            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase fade-in text-sm" style="animation-delay: 0.5s">Emote to Demote your feelings</p>
             <button id="launch-btn" class="mt-12 bg-white text-black px-10 py-4 rounded-full font-bold active:scale-95 transition-all fade-in" style="animation-delay: 1s">LAUNCH ME</button>
         </div>
 
         <div id="app">
             <div class="panel-vision">
-                <div class="view-circle" id="borderFrame">
-                    <video id="webcam" autoplay playsinline muted></video>
-                </div>
-                <div id="mood-label">System Initializing...</div>
+                <div class="view-circle" id="borderFrame"><video id="webcam" autoplay playsinline muted></video></div>
+                <div id="mood-label">Initializing...</div>
                 <div class="flex gap-6 mt-4">
                     <button id="camBtn" class="control-btn">📷</button>
                     <button id="micBtn" class="control-btn">🎤</button>
@@ -83,7 +71,7 @@
             </div>
 
             <div class="panel-advice">
-                <p id="advice-display" class="text-md text-center font-medium italic text-slate-200 px-4">Ready to listen...</p>
+                <p id="advice-display" class="text-md text-center font-medium italic text-slate-200 px-4">System Ready...</p>
             </div>
 
             <div class="panel-input">
@@ -92,7 +80,6 @@
                     <button onclick="clearMemory()" class="text-[9px] text-red-500 font-bold uppercase">Clear History</button>
                 </div>
                 <input type="text" id="user-text" placeholder="Share your thoughts...">
-                <p class="text-[8px] text-center text-slate-600 mt-2 uppercase tracking-widest">Press Enter to process</p>
             </div>
         </div>
     </div>
@@ -104,8 +91,20 @@
     let camStream = null, micStream = null, mediaRecorder, audioChunks = [], voteBuffer = [];
     let lastLockInUpdate = 0, lockInDuration = 1800;
 
-    // YOUR URL HERE
-    const BACKEND_URL = "https://emotebro-finallaunch.onrender.com/analyze";
+    const BACKEND_URL = "https://YOUR-RENDER-URL.onrender.com/analyze";
+
+    // Privacy Logic: Only show if they haven't agreed before
+    window.onload = () => {
+        if (!localStorage.getItem('privacy_agreed')) {
+            document.getElementById('privacy-modal').style.display = 'flex';
+        }
+    };
+
+    document.getElementById('agree-btn').addEventListener('click', () => {
+        localStorage.setItem('privacy_agreed', 'true');
+        document.getElementById('privacy-modal').style.opacity = '0';
+        setTimeout(() => document.getElementById('privacy-modal').style.display = 'none', 500);
+    });
 
     document.getElementById('launch-btn').addEventListener('click', async () => {
         document.getElementById('onboarding').style.opacity = '0';
@@ -138,7 +137,6 @@
         if (result.faceBlendshapes?.length > 0) {
             const s = result.faceBlendshapes[0].categories.reduce((acc, c) => (acc[c.categoryName] = c.score, acc), {});
             let instant = "Neutral";
-            
             if (s.jawOpen > 0.45) instant = "Surprised";
             else if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.3) instant = "Happy";
             else if (s.browInnerUp > 0.45) instant = "Sad";
@@ -153,7 +151,6 @@
                     lastLockInUpdate = now;
                     document.body.className = `theme-${winner.toLowerCase()}`;
                     document.getElementById('mood-label').innerText = `LOCKED: ${winner}`;
-                    document.getElementById('borderFrame').style.borderColor = "var(--accent)";
                 }
                 voteBuffer.shift();
             }
@@ -179,7 +176,7 @@
             const data = await res.json();
             typeWriter(data.advice);
         } catch (err) {
-            typeWriter("System connection timeout. Check backend.");
+            typeWriter("Connecting to neural core...");
         }
     }
 
