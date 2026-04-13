@@ -199,7 +199,7 @@
         let i = 0; const itv = setInterval(() => {
             if (i < text.length) el.innerHTML += text.charAt(i++);
             else clearInterval(itv);
-        }, 30);
+        }, 40);
     }
 
     window.clearMemory = () => { if(confirm("Clear local cache?")) localStorage.clear(); };
