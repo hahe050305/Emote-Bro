@@ -14,86 +14,72 @@
         .theme-frustrated { --bg-current: #240a0a; --accent: #ef4444; }
         .theme-surprised { --bg-current: #24180a; --accent: #f59e0b; }
         
-        body { margin: 0; background: #000; font-family: 'Inter', sans-serif; color: #fff; overflow: hidden; height: 100vh; }
-        #phone-wrapper { width: 100%; height: 100vh; background: var(--bg-current, var(--bg-neutral)); transition: background 1.5s ease; position: relative; display: flex; align-items: center; justify-content: center; }
+        body { margin: 0; background: #000; font-family: 'Inter', sans-serif; color: #fff; overflow-x: hidden; min-height: 100vh; }
+        #phone-wrapper { width: 100%; min-height: 100vh; background: var(--bg-current, var(--bg-neutral)); transition: background 1.5s ease; position: relative; display: flex; align-items: center; justify-content: center; }
         
-        /* Onboarding */
         #onboarding { position: absolute; inset: 0; z-index: 50; background: #000; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: opacity 1s ease; }
         .fade-in { animation: fadeIn 1.5s ease forwards; opacity: 0; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Main UI - Static Layout */
-        #app { display: none; grid-template-columns: 320px 1fr 320px; width: 95%; max-width: 1400px; height: 85vh; gap: 20px; }
-        .panel { background: var(--glass); backdrop-filter: blur(40px); border-radius: 40px; border: 1px solid rgba(255,255,255,0.08); padding: 25px; display: flex; flex-direction: column; overflow: hidden; height: 100%; }
-        
-        /* Smooth Scrollbar for Memory Bank */
-        #history-list { flex-grow: 1; overflow-y: auto; padding-right: 10px; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; display: flex; flex-direction: column; gap: 12px; }
-        #history-list::-webkit-scrollbar { width: 5px; }
-        #history-list::-webkit-scrollbar-track { background: transparent; }
-        #history-list::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 10px var(--accent); }
-        
-        /* Content Containers */
-        .history-item { background: rgba(255,255,255,0.03); padding: 16px; border-radius: 20px; font-size: 0.85rem; border-left: 3px solid var(--accent); transition: 0.3s; }
-        .view-circle { width: 340px; height: 340px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 4px solid #fff; background: #111; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
-        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
-        
-        /* Centered Neural Input */
-        .input-box { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 24px; padding: 15px; width: 100%; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
-        .input-box:focus-within { border-color: var(--accent); background: rgba(255,255,255,0.08); }
-        #user-text { background: transparent; border: none; outline: none; color: #fff; width: 100%; font-size: 0.9rem; text-align: center; }
+        #app { display: none; flex-direction: column; width: 95%; max-width: 1400px; gap: 15px; padding: 20px 0; }
+        @media (min-width: 1024px) {
+            #app { display: none; grid-template-columns: 320px 1fr 320px; flex-direction: row; height: 85vh; align-items: stretch; }
+        }
 
-        .control-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; font-size: 20px; }
-        .control-btn.active { background: var(--accent); box-shadow: 0 0 30px var(--accent); color: white; border-color: white; }
+        .panel { background: var(--glass); backdrop-filter: blur(40px); border-radius: 30px; border: 1px solid rgba(255,255,255,0.08); padding: 25px; display: flex; flex-direction: column; overflow: hidden; }
+        #history-list { flex-grow: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--accent) transparent; display: flex; flex-direction: column; gap: 12px; max-height: 400px; }
+        
+        .history-item { background: rgba(255,255,255,0.03); padding: 16px; border-radius: 20px; font-size: 0.85rem; border-left: 3px solid var(--accent); transition: 0.3s; }
+        .view-circle { width: 280px; height: 280px; margin: 0 auto; border-radius: 50%; overflow: hidden; border: 4px solid #fff; transition: all 0.8s ease; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        @media (min-width: 768px) { .view-circle { width: 340px; height: 340px; } }
+        
+        video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+        #mood-label { transition: all 0.5s ease; text-shadow: 0 0 10px var(--accent); }
+
+        .control-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.3s; }
+        .control-btn.active { background: var(--accent); box-shadow: 0 0 30px var(--accent); color: white; }
     </style>
 </head>
 <body class="theme-neutral">
     <div id="phone-wrapper">
         <div id="onboarding">
-            <h1 class="text-7xl font-black mb-2 fade-in">Emote Bro <span id="emoji-swap">🫣</span></h1>
-            <p class="text-cyan-400 font-medium tracking-[0.3em] uppercase fade-in text-[10px]" style="animation-delay: 0.5s">Emote to Demote your feelings</p>
+            <h1 class="text-5xl md:text-7xl font-black mb-2 fade-in">Emote Bro <span id="emoji-swap">🫣</span></h1>
+            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase fade-in text-lg" style="animation-delay: 0.5s">Emote to Demote your Feelings</p>
             <button id="launch-btn" class="mt-16 bg-white text-black px-12 py-4 rounded-full font-bold hover:bg-cyan-400 transition-all fade-in" style="animation-delay: 1s">LAUNCH ME</button>
         </div>
 
         <div id="app">
-            <div class="panel">
+            <div class="panel order-2 lg:order-1">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-[10px] font-black tracking-widest text-slate-500 uppercase">Memory Bank</h2>
-                    <button onclick="clearMemory()" class="text-[9px] text-red-500 font-bold uppercase hover:opacity-60 transition">Clear</button>
+                    <button onclick="clearMemory()" class="text-[9px] text-red-500 font-bold uppercase">Clear</button>
                 </div>
                 <div id="history-list"></div>
             </div>
 
-            <div class="flex flex-col items-center justify-between py-6">
+            <div class="flex flex-col items-center justify-between py-6 order-1 lg:order-2">
                 <div class="view-circle" id="borderFrame"><video id="webcam" autoplay playsinline muted></video></div>
                 
-                <div class="flex flex-col items-center w-full max-w-xl">
-                    <div id="mood-label" class="text-xs font-black tracking-[0.4em] uppercase mb-8" style="color: var(--accent)">Getting Ready...</div>
+                <div class="flex flex-col items-center w-full max-w-xl px-4 mt-8">
+                    <div id="mood-label" class="text-xs font-black tracking-[0.4em] uppercase mb-8" style="color: var(--accent)">Analyzing YOU...</div>
                     
                     <div class="flex gap-8 mb-8">
-                        <button id="camBtn" class="control-btn" title="Toggle Camera">📷</button>
-                        <button id="micBtn" class="control-btn" title="Hold to Speak">🎤</button>
+                        <button id="camBtn" class="control-btn">📷</button>
+                        <button id="micBtn" class="control-btn">🎤</button>
                     </div>
 
-                    <div class="w-full bg-white/5 border border-white/10 p-8 rounded-[40px] h-[160px] flex items-center justify-center backdrop-blur-md overflow-hidden">
-                        <p id="advice-display" class="text-lg text-center font-medium italic text-slate-200 leading-relaxed">Ready to vibe...</p>
+                    <div class="w-full bg-white/5 border border-white/10 p-8 rounded-[40px] min-h-[140px] flex items-center justify-center backdrop-blur-md">
+                        <p id="advice-display" class="text-lg text-center font-medium italic text-slate-200">System Ready...</p>
                     </div>
                 </div>
             </div>
 
-            <div class="panel justify-center items-center space-y-6">
+            <div class="panel justify-center items-center space-y-6 order-3">
                 <div class="text-center w-full">
-                    <h2 class="text-[10px] font-black tracking-widest text-slate-500 uppercase mb-12">Speak Out </h2>
-                    
-                    <div class="input-box">
-                        <input type="text" id="user-text" placeholder="Drop out your thoughts here...">
+                    <h2 class="text-[10px] font-black tracking-widest text-slate-500 uppercase mb-8">Neural Input</h2>
+                    <div class="bg-white/5 border border-white/10 rounded-2xl p-4">
+                        <input type="text" id="user-text" class="bg-transparent border-none outline-none w-full text-center" placeholder="Share your thoughts...">
                     </div>
-                    
-                    <p class="text-[9px] text-slate-600 mt-4 font-bold uppercase tracking-widest">Press Enter to Send</p>
-                </div>
-                
-                <div class="pt-20 opacity-20">
-                    <div class="w-1 h-1 bg-white rounded-full mx-auto mb-1"></div>
-                    <div class="w-1 h-8 bg-gradient-to-b from-white to-transparent mx-auto"></div>
                 </div>
             </div>
         </div>
@@ -104,37 +90,17 @@
 
     let faceLandmarker, video = document.getElementById("webcam"), currentMood = "Neutral";
     let camStream = null, micStream = null, mediaRecorder, audioChunks = [], voteBuffer = [];
+    let lastLockInUpdate = 0, lockInDuration = 1800; // 1.8s lock-in
 
-    const emojis = ["😀", "😔", "😡", "😲", "😎", "🫣"];
-    let emojiIdx = 0;
-    setInterval(() => {
-        const el = document.getElementById('emoji-swap');
-        if(el) el.innerText = emojis[emojiIdx++ % emojis.length];
-    }, 1500);
+    const BACKEND_URL = "https://emotebro-finallaunch.onrender.com/analyze";
 
-    function saveChat(type, text) {
-        const history = JSON.parse(localStorage.getItem('emote_chats') || "[]");
-        history.unshift({ type, text, timestamp: new Date().toLocaleTimeString() });
-        localStorage.setItem('emote_chats', JSON.stringify(history.slice(0, 50)));
-        renderHistory();
-    }
-
-    function renderHistory() {
-        const history = JSON.parse(localStorage.getItem('emote_chats') || "[]");
-        const list = document.getElementById('history-list');
-        list.innerHTML = history.map(item => `
-            <div class="history-item">
-                <div class="text-[9px] opacity-40 font-bold mb-1 uppercase tracking-tighter">${item.type} • ${item.timestamp}</div>
-                <div class="leading-snug">${item.text}</div>
-            </div>
-        `).join('');
-    }
-
-    window.clearMemory = () => { if(confirm("Clear memory bank?")) { localStorage.removeItem('emote_chats'); renderHistory(); }};
-
+    // Onboarding
     document.getElementById('launch-btn').addEventListener('click', async () => {
         document.getElementById('onboarding').style.opacity = '0';
-        setTimeout(() => { document.getElementById('onboarding').remove(); document.getElementById('app').style.display = 'grid'; }, 1000);
+        setTimeout(() => { 
+            document.getElementById('onboarding').remove(); 
+            document.getElementById('app').style.display = (window.innerWidth >= 1024) ? 'grid' : 'flex'; 
+        }, 1000);
         renderHistory();
 
         const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
@@ -143,6 +109,67 @@
             outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
         });
     });
+
+    // Camera Logic
+    document.getElementById('camBtn').addEventListener('click', async () => {
+        if (camStream) {
+            camStream.getTracks().forEach(t => t.stop()); camStream = null;
+            document.getElementById('camBtn').classList.remove('active');
+        } else {
+            camStream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = camStream; document.getElementById('camBtn').classList.add('active');
+            video.onloadedmetadata = () => runDetection();
+        }
+    });
+
+    function runDetection() {
+        if (!camStream || !faceLandmarker) return;
+        const result = faceLandmarker.detectForVideo(video, performance.now());
+        
+        if (result.faceBlendshapes?.length > 0) {
+            const s = result.faceBlendshapes[0].categories.reduce((acc, c) => (acc[c.categoryName] = c.score, acc), {});
+            let instant = "Neutral";
+            
+            // PRIORITY LOGIC: Reverted Surprised to pure Jaw Open logic as requested
+            if (s.jawOpen > 0.45) instant = "Surprised";
+            else if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.3) instant = "Happy";
+            else if (s.browInnerUp > 0.45) instant = "Sad";
+            else if ((s.browDownLeft + s.browDownRight)/2 > 0.25) instant = "Frustrated";
+
+            voteBuffer.push(instant);
+            
+            // Nominal threshold for stable mobile testing (22 frames)
+            if (voteBuffer.length > 22) {
+                const winner = voteBuffer.reduce((a, b, i, arr) => 
+                    (arr.filter(v => v===a).length >= arr.filter(v => v===b).length ? a : b)
+                );
+
+                const now = Date.now();
+                // LOCK-IN logic: Prevents jitter, makes AI feel observant
+                if (winner !== currentMood && (now - lastLockInUpdate > lockInDuration)) {
+                    currentMood = winner;
+                    lastLockInUpdate = now;
+                    
+                    document.body.className = `theme-${winner.toLowerCase()}`;
+                    document.getElementById('mood-label').innerText = `LOCKED: ${winner}`;
+                    
+                    const frame = document.getElementById('borderFrame');
+                    frame.style.borderColor = "var(--accent)";
+                    frame.style.boxShadow = `0 0 60px var(--accent)`;
+                }
+                voteBuffer.shift();
+            }
+        }
+        requestAnimationFrame(runDetection);
+    }
+
+    // Communication Logic (Text/Voice)
+    document.getElementById('user-text').onkeypress = async (e) => {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+            const text = e.target.value; e.target.value = "";
+            processAnalysis({ text, face: currentMood });
+        }
+    };
 
     document.getElementById('micBtn').addEventListener('click', async () => {
         if (mediaRecorder?.state === "recording") {
@@ -158,61 +185,25 @@
             const formData = new FormData();
             formData.append('audio', new Blob(audioChunks, { type: 'audio/webm' }));
             formData.append('face', currentMood);
-            const res = await fetch('http://127.0.0.1:5000/analyze', { method: 'POST', body: formData });
-            const data = await res.json();
-            typeWriter(data.advice);
-            saveChat("Voice", data.advice);
+            processAnalysis(formData, true);
         };
         mediaRecorder.start();
         document.getElementById('micBtn').classList.add('active');
     });
 
-    document.getElementById('camBtn').addEventListener('click', async () => {
-        if (camStream) {
-            camStream.getTracks().forEach(t => t.stop()); camStream = null;
-            document.getElementById('camBtn').classList.remove('active');
-        } else {
-            camStream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = camStream; document.getElementById('camBtn').classList.add('active');
-            video.onloadedmetadata = () => runDetection();
-        }
-    });
-
-    function runDetection() {
-        if (!camStream || !faceLandmarker) return;
-        const result = faceLandmarker.detectForVideo(video, performance.now());
-        if (result.faceBlendshapes?.length > 0) {
-            const s = result.faceBlendshapes[0].categories.reduce((acc, c) => (acc[c.categoryName] = c.score, acc), {});
-            let instant = "Neutral";
-            if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.25) instant = "Happy";
-            else if (s.browInnerUp > 0.4) instant = "Sad";
-            else if ((s.browDownLeft + s.browDownRight)/2 > 0.2) instant = "Frustrated";
-            else if (s.jawOpen > 0.3) instant = "Surprised";
-
-            voteBuffer.push(instant);
-            if (voteBuffer.length > 25) {
-                const winner = voteBuffer.reduce((a, b, i, arr) => (arr.filter(v => v===a).length >= arr.filter(v => v===b).length ? a : b));
-                if (winner !== currentMood) {
-                    currentMood = winner;
-                    document.body.className = `theme-${winner.toLowerCase()}`;
-                    document.getElementById('mood-label').innerText = winner;
-                }
-                voteBuffer.shift();
-            }
-        }
-        requestAnimationFrame(runDetection);
-    }
-
-    document.getElementById('user-text').onkeypress = async (e) => {
-        if (e.key === 'Enter' && e.target.value.trim()) {
-            const text = e.target.value; e.target.value = "";
-            const res = await fetch('http://127.0.0.1:5000/analyze', {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ text, face: currentMood })
-            });
+    async function processAnalysis(payload, isVoice = false) {
+        try {
+            const options = isVoice ? { method: 'POST', body: payload } : { 
+                method: 'POST', 
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            };
+            const res = await fetch(BACKEND_URL, options);
             const data = await res.json();
             typeWriter(data.advice);
-            saveChat("Text", data.advice);
+            saveChat(isVoice ? "Voice" : "Text", data.advice);
+        } catch (err) {
+            typeWriter("Brain is loading... try again in a moment.");
         }
     }
 
@@ -223,6 +214,26 @@
             else clearInterval(itv);
         }, 30);
     }
+
+    function saveChat(type, text) {
+        const history = JSON.parse(localStorage.getItem('emote_chats') || "[]");
+        history.unshift({ type, text, timestamp: new Date().toLocaleTimeString() });
+        localStorage.setItem('emote_chats', JSON.stringify(history.slice(0, 50)));
+        renderHistory();
+    }
+
+    function renderHistory() {
+        const history = JSON.parse(localStorage.getItem('emote_chats') || "[]");
+        const list = document.getElementById('history-list');
+        list.innerHTML = history.map(item => `
+            <div class="history-item">
+                <div class="text-[9px] opacity-40 font-bold mb-1 uppercase">${item.type} • ${item.timestamp}</div>
+                <div class="leading-snug">${item.text}</div>
+            </div>
+        `).join('');
+    }
+
+    window.clearMemory = () => { if(confirm("Clear memory bank?")) { localStorage.removeItem('emote_chats'); renderHistory(); }};
 </script>
 </body>
 </html>
