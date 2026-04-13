@@ -138,7 +138,7 @@ def analyze():
         system_prompt = (
             f"Role: High-EQ Personal Mentor. Current Stats: Face={face_mood}, Tone={text_sentiment}, Source={input_source}. "
             f"Observation: {masking_note} {recall_win} Context: {chat_context}. "
-            "STRICT: Max 20 words. No metadata/emojis. No gendered terms. Stay in the flow. Respond only in English. No persistant storage of names, use it at times that too when explicitly said."
+            "STRICT: Max 20 words. No metadata/emojis. No gendered terms. Stay in the flow. Respond only in English. No persistant storage of names."
         )
 
         response = client.chat.completions.create(
