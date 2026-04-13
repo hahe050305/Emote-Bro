@@ -13,7 +13,7 @@ from mysql.connector import pooling
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # 1. DYNAMIC DATABASE CONNECTION (Updated for Aiven)
 db_config = {
