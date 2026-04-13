@@ -1,5 +1,6 @@
 import os
 import re
+import requests
 from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
@@ -40,7 +41,26 @@ def get_db_connection():
     return connection_pool.get_connection()
 
 # 2. AI MODELS
-classifier = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion")
+
+HF_TOKEN = os.environ.get("HF_TOKEN")
+API_URL = "https://api-inference.huggingface.co/models/bhadresh-savani/distilbert-base-uncased-emotion"
+headers = {"Authorization": f"Bearer {HF_TOKEN}"}
+
+def classifier(text):
+    try:
+        response = requests.post(API_URL, headers=headers, json={"inputs": text}, timeout=10)
+        result = response.json()
+        
+        # Hugging Face returns a list of lists: [[{'label': 'joy', 'score': 0.9}, ...]]
+        # We just need the top label
+        if isinstance(result, list) and len(result) > 0:
+            return [{"label": result[0][0]['label']}]
+        else:
+            return [{"label": "neutral"}]
+    except Exception as e:
+        print(f"HF API Error: {e}")
+        return [{"label": "neutral"}]
+# classifier = pipeline("text-classification", model="bhadresh-savani/distilbert-base-uncased-emotion")
 
 # API Key handled via Environment Variable for security
 client = Groq(api_key=os.environ.get("API_KEY"))
@@ -119,7 +139,7 @@ def analyze():
         system_prompt = (
             f"Role: High-EQ Personal Mentor. Current Stats: Face={face_mood}, Tone={text_sentiment}, Source={input_source}. "
             f"Observation: {masking_note} {recall_win} Context: {chat_context}. "
-            "STRICT: Max 20 words. No metadata/emojis. No gendered terms. Stay in the flow. Respond only in English. No persistant storage of names."
+            "STRICT: Max 20 words. No metadata/emojis. No gendered terms. Stay in the flow. Respond only in English. No persistant storage of names, use it at times that too when explicitly said."
         )
 
         response = client.chat.completions.create(
