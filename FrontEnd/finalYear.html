@@ -77,7 +77,7 @@
             </div>
 
             <div class="panel-advice">
-                <p id="advice-display" class="text-lg text-center font-medium italic text-slate-200 px-6 leading-relaxed">Neural system ready for input...</p>
+                <p id="advice-display" class="text-lg text-center font-medium italic text-slate-200 px-6 leading-relaxed">Drop your thoughts...</p>
             </div>
 
             <div class="panel-input">
@@ -98,7 +98,7 @@
     let lastLockInUpdate = 0, lockInDuration = 1800;
 
     // Update with your Render link
-    const BACKEND_URL = "https://YOUR-RENDER-URL.onrender.com/analyze";
+    const BACKEND_URL = "https://emotebro-finallaunch.onrender.com/analyze";
 
     const launchApp = async () => {
         document.getElementById('onboarding').style.opacity = '0';
@@ -151,13 +151,13 @@
         if (result.faceBlendshapes?.length > 0) {
             const s = result.faceBlendshapes[0].categories.reduce((acc, c) => (acc[c.categoryName] = c.score, acc), {});
             let instant = "Neutral";
-            if (s.jawOpen > 0.45) instant = "Surprised";
-            else if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.3) instant = "Happy";
-            else if (s.browInnerUp > 0.45) instant = "Sad";
+            if (s.jawOpen > 0.4) instant = "Surprised";
+            else if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.2) instant = "Happy";
+            else if (s.browInnerUp > 0.4) instant = "Sad";
             else if ((s.browDownLeft + s.browDownRight)/2 > 0.25) instant = "Frustrated";
 
             voteBuffer.push(instant);
-            if (voteBuffer.length > 22) {
+            if (voteBuffer.length > 18) {
                 const winner = voteBuffer.reduce((a, b, i, arr) => (arr.filter(v => v===a).length >= arr.filter(v => v===b).length ? a : b));
                 const now = Date.now();
                 if (winner !== currentMood && (now - lastLockInUpdate > lockInDuration)) {
