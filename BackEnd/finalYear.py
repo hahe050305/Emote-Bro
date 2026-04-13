@@ -5,7 +5,6 @@ from datetime import datetime
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from groq import Groq
-from transformers import pipeline
 from dotenv import load_dotenv
 from mysql.connector import pooling
 
