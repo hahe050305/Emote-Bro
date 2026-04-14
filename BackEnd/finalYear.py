@@ -72,6 +72,10 @@ def clean_ai_text(text):
 
 @app.route('/analyze', methods=['POST'])
 def analyze():
+    if request.is_json:
+        ping_data = request.get_json()
+        if ping_data.get('ping'):
+            return jsonify({"status": "Backend & DB Warm"}), 200
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
     try:
