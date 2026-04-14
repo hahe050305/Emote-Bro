@@ -18,7 +18,7 @@
         
         #phone-wrapper { width: 100%; height: 100%; background: var(--bg-current, var(--bg-neutral)); transition: background 1.5s ease; display: flex; flex-direction: column; position: relative; }
 
-        /* Gemini-style Sidebar (Memory Bank) */
+        /* Sidebar */
         #sidebar { position: fixed; left: -280px; top: 0; bottom: 0; width: 280px; background: #0a0a0c; z-index: 200; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); border-right: 1px solid rgba(255,255,255,0.1); padding: 60px 20px 20px; display: flex; flex-direction: column; }
         #sidebar.open { left: 0; box-shadow: 20px 0 50px rgba(0,0,0,0.8); }
         .sidebar-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 150; display: none; backdrop-filter: blur(4px); }
@@ -26,28 +26,25 @@
         #menu-toggle { position: fixed; top: 15px; left: 15px; z-index: 210; width: 45px; height: 45px; background: var(--glass); border-radius: 12px; display: flex; flex-direction: column; gap: 5px; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1); }
         #menu-toggle span { width: 20px; height: 2px; background: white; border-radius: 2px; transition: 0.3s; }
 
-        /* Privacy Shield Pop-up */
+        /* Privacy Modal */
         #privacy-modal { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(15px); }
         .modal-content { background: #0f172a; border: 1px solid rgba(6, 182, 212, 0.3); padding: 35px; border-radius: 40px; max-width: 350px; text-align: center; transform: scale(0.9); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         #privacy-modal.show .modal-content { transform: scale(1); }
 
-        /* App Layout - Optimized for "Intact" View */
+        /* Layout */
         #app { display: none; flex: 1; flex-direction: column; height: 100%; width: 100%; padding: 15px; gap: 10px; box-sizing: border-box; justify-content: space-between; }
-        
-        /* Vision Section: Shrinks if needed */
-        .panel-vision { flex: 2; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s ease; }
+        .panel-vision { flex: 2; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .view-circle { width: 45vw; height: 45vw; max-width: 220px; max-height: 220px; border-radius: 50%; overflow: hidden; border: 3px solid #fff; box-shadow: 0 0 30px rgba(0,0,0,0.5); flex-shrink: 0; }
         video { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-        /* Advice Section: Scrollable if text is long */
         .panel-advice { flex: 1.2; min-height: 100px; background: var(--glass); backdrop-filter: blur(30px); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); padding: 15px; display: flex; align-items: center; justify-content: center; overflow-y: auto; text-align: center; }
-        
-        /* Input Section: Locked at bottom */
         .panel-input { flex-shrink: 0; background: var(--glass); backdrop-filter: blur(30px); border-radius: 25px; border: 1px solid rgba(255,255,255,0.1); padding: 12px; margin-bottom: env(safe-area-inset-bottom, 10px); }
 
-        .control-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; }
-        .control-btn.active { background: var(--accent); border-color: white; box-shadow: 0 0 20px var(--accent); }
+        .control-btn { width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); transition: 0.3s; font-size: 1.2rem; }
+        .control-btn.active { background: var(--accent); border-color: white; box-shadow: 0 0 20px var(--accent); animation: pulse 1.5s infinite; }
         
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
         #user-text { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; padding: 12px; width: 100%; outline: none; text-align: center; color: white; font-size: 16px; }
         #mood-label { font-size: 0.6rem; font-weight: 900; letter-spacing: 0.4em; margin-top: 10px; color: var(--accent); text-transform: uppercase; }
 
@@ -82,9 +79,9 @@
 
     <div id="phone-wrapper">
         <div id="onboarding">
-            <h1 class="text-5xl font-black mb-4 fade-in">Emote Bro ☺️</h1>
-            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase fade-in text-[10px]" style="animation-delay: 0.5s">Emote to Demote your feelings</p>
-            <button id="launch-btn" class="mt-14 bg-white text-black px-12 py-4 rounded-full font-black active:scale-90 transition-all fade-in" style="animation-delay: 1s">LAUNCH ME</button>
+            <h1 class="text-5xl font-black mb-4">Emote Bro ☺️</h1>
+            <p class="text-cyan-400 font-medium tracking-[0.2em] uppercase text-[10px]">Emote to Demote your feelings</p>
+            <button id="launch-btn" class="mt-14 bg-white text-black px-12 py-4 rounded-full font-black active:scale-90 transition-all">LAUNCH ME</button>
         </div>
 
         <div id="app">
@@ -118,10 +115,14 @@
 
     let faceLandmarker, video = document.getElementById("webcam"), currentMood = "Neutral";
     let camStream = null, voteBuffer = [], lastLockInUpdate = 0, lockInDuration = 1800;
+    
+    // Audio Variables
+    let mediaRecorder, audioChunks = [], isRecording = false;
 
+    // YOUR BACKEND URL
     const BACKEND_URL = "https://emotebro-finallaunch.onrender.com/analyze";
 
-    // Sidebar Logic
+    // UI Logic
     const menuBtn = document.getElementById('menu-toggle');
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('sidebar-overlay');
@@ -135,8 +136,8 @@
     overlay.onclick = toggleSidebar;
 
     const launchApp = async () => {
-        document.getElementById('onboarding').remove(); 
-        document.getElementById('app').style.display = 'flex'; 
+        document.getElementById('onboarding').style.display = 'none';
+        document.getElementById('app').style.display = 'flex';
 
         const vision = await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
         faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
@@ -154,18 +155,23 @@
 
     document.getElementById('agree-btn').addEventListener('click', () => {
         localStorage.setItem('privacy_agreed', 'true');
-        document.getElementById('privacy-modal').remove();
-        launchApp();
+        document.getElementById('privacy-modal').classList.remove('show');
+        setTimeout(() => { document.getElementById('privacy-modal').style.display = 'none'; launchApp(); }, 400);
     });
 
+    // Camera Handler
     document.getElementById('camBtn').addEventListener('click', async () => {
         if (camStream) {
             camStream.getTracks().forEach(t => t.stop()); camStream = null;
             document.getElementById('camBtn').classList.remove('active');
+            document.getElementById('mood-label').innerText = "Vision Paused";
         } else {
-            camStream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = camStream; document.getElementById('camBtn').classList.add('active');
-            video.onloadedmetadata = () => runDetection();
+            try {
+                camStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = camStream;
+                document.getElementById('camBtn').classList.add('active');
+                video.onloadedmetadata = () => runDetection();
+            } catch (err) { alert("Camera access denied."); }
         }
     });
 
@@ -175,20 +181,20 @@
         if (result.faceBlendshapes?.length > 0) {
             const s = result.faceBlendshapes[0].categories.reduce((acc, c) => (acc[c.categoryName] = c.score, acc), {});
             let instant = "Neutral";
-            if (s.jawOpen > 0.4) instant = "Surprised";
-            else if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.2) instant = "Happy";
+            if (s.jawOpen > 0.45) instant = "Surprised";
+            else if ((s.mouthSmileLeft + s.mouthSmileRight)/2 > 0.25) instant = "Happy";
             else if (s.browInnerUp > 0.4) instant = "Sad";
-            else if ((s.browDownLeft + s.browDownRight)/2 > 0.25) instant = "Frustrated";
+            else if ((s.browDownLeft + s.browDownRight)/2 > 0.3) instant = "Frustrated";
 
             voteBuffer.push(instant);
-            if (voteBuffer.length > 18) {
+            if (voteBuffer.length > 15) {
                 const winner = voteBuffer.reduce((a, b, i, arr) => (arr.filter(v => v===a).length >= arr.filter(v => v===b).length ? a : b));
                 const now = Date.now();
                 if (winner !== currentMood && (now - lastLockInUpdate > lockInDuration)) {
                     currentMood = winner;
                     lastLockInUpdate = now;
                     document.body.className = `theme-${winner.toLowerCase()}`;
-                    document.getElementById('mood-label').innerText = `LOCKED: ${winner}`;
+                    document.getElementById('mood-label').innerText = `STATUS: ${winner}`;
                 }
                 voteBuffer.shift();
             }
@@ -196,15 +202,56 @@
         requestAnimationFrame(runDetection);
     }
 
+    // --- MIC / VOICE HANDLER ---
+    document.getElementById('micBtn').addEventListener('click', async () => {
+        const micBtn = document.getElementById('micBtn');
+        if (!isRecording) {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                mediaRecorder = new MediaRecorder(stream);
+                audioChunks = [];
+                mediaRecorder.ondataavailable = (e) => audioChunks.push(e.data);
+                mediaRecorder.onstop = async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const formData = new FormData();
+                    formData.append('audio', audioBlob);
+                    formData.append('face', currentMood);
+
+                    processVoice(formData);
+                    stream.getTracks().forEach(t => t.stop());
+                };
+                mediaRecorder.start();
+                isRecording = true;
+                micBtn.classList.add('active');
+                document.getElementById('advice-display').innerText = "Listening to your voice...";
+            } catch (err) { alert("Mic access denied."); }
+        } else {
+            mediaRecorder.stop();
+            isRecording = false;
+            micBtn.classList.remove('active');
+        }
+    });
+
+    async function processVoice(formData) {
+        document.getElementById('advice-display').innerText = "Transcribing & Analyzing...";
+        try {
+            const res = await fetch(BACKEND_URL, { method: 'POST', body: formData });
+            const data = await res.json();
+            saveChat("🎤 Voice Note", data.advice);
+            typeWriter(data.advice);
+        } catch (err) { typeWriter("Voice terminal offline."); }
+    }
+
+    // --- TEXT HANDLER ---
     document.getElementById('user-text').onkeypress = async (e) => {
         if (e.key === 'Enter' && e.target.value.trim()) {
             const text = e.target.value; e.target.value = "";
-            processAnalysis(text);
+            processText(text);
         }
     };
 
-    async function processAnalysis(text) {
-        document.getElementById('advice-display').innerText = "Analyzing Pulse...";
+    async function processText(text) {
+        document.getElementById('advice-display').innerText = "Syncing with Neural Hub...";
         try {
             const res = await fetch(BACKEND_URL, { 
                 method: 'POST', 
@@ -214,9 +261,7 @@
             const data = await res.json();
             saveChat(text, data.advice);
             typeWriter(data.advice);
-        } catch (err) {
-            typeWriter("Hub connection weak. Check connectivity.");
-        }
+        } catch (err) { typeWriter("Hub connection weak."); }
     }
 
     function typeWriter(text) {
@@ -224,13 +269,13 @@
         let i = 0; const itv = setInterval(() => {
             if (i < text.length) el.innerHTML += text.charAt(i++);
             else { clearInterval(itv); el.scrollTop = el.scrollHeight; }
-        }, 35);
+        }, 40);
     }
 
     function saveChat(user, ai) {
         const history = JSON.parse(localStorage.getItem('emote_chats') || "[]");
         history.unshift({ user, ai, time: new Date().toLocaleTimeString() });
-        localStorage.setItem('emote_chats', JSON.stringify(history.slice(0, 10)));
+        localStorage.setItem('emote_chats', JSON.stringify(history.slice(0, 15)));
     }
 
     function updateHistoryUI() {
@@ -238,13 +283,13 @@
         const list = document.getElementById('chat-history-list');
         list.innerHTML = history.length ? history.map(h => `
             <div class="p-3 bg-white/5 rounded-xl border border-white/5">
-                <p class="text-[10px] text-cyan-400 font-bold">${h.user}</p>
-                <p class="text-[11px] text-slate-400 mt-1">${h.ai.substring(0,60)}...</p>
+                <p class="text-[9px] text-cyan-400 font-bold uppercase">${h.user.substring(0,25)}</p>
+                <p class="text-[11px] text-slate-300 mt-1">${h.ai}</p>
             </div>
         `).join('') : '<p class="italic text-xs opacity-50">Memory Empty</p>';
     }
 
-    window.clearMemory = () => { if(confirm("Wipe all neural logs?")) { localStorage.clear(); updateHistoryUI(); } };
+    window.clearMemory = () => { if(confirm("Wipe logs?")) { localStorage.removeItem('emote_chats'); updateHistoryUI(); } };
 </script>
 </body>
 </html>
