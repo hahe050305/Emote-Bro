@@ -56,6 +56,7 @@ client = Groq(api_key=os.environ.get("API_KEY"))
 def clean_ai_text(text):
     text = re.sub(r':[a-z_]+:', '', text)
     text = re.sub(r'\(.*?\)', '', text)
+    text = re.sub(r'dev_[a-z0-9]+', '', text)
     text = re.sub(r'^(AI|Response|Text|Face|Mentor|Vibe|Harish):\s*', '', text, flags=re.IGNORECASE)
     return ' '.join(text.split()).strip()
 
