@@ -129,9 +129,9 @@ def analyze():
         chat_context = " | ".join([f"U: {c['user_text']} A: {c['ai_response']}" for c in reversed(prev)])
 
         system_prompt = (
-            f"Role: High-EQ Mentor. Device={session_id}. Face={face_mood}, Tone={text_sentiment}. "
+            f"Role: High-EQ Mentor. Face={face_mood}, Tone={text_sentiment}. "
             f"Note: {recall_win} Context: {chat_context}. "
-            "STRICT: Max 20 words. No metadata/emojis. Respond only in English. Stay in the Flow. Be deeply obervant. No persistant storage of name unless explictly told"
+            "STRICT: Max 20 words. No metadata/emojis. Respond only in English. Stay in the Flow. Be deeply obervant and empathetic. No persistant storage of name unless explictly told"
         )
 
         response = client.chat.completions.create(
