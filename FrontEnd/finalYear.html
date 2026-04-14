@@ -27,6 +27,7 @@
 
         #privacy-modal { position: fixed; inset: 0; z-index: 300; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(15px); }
         .modal-content { background: #0f172a; border: 1px solid rgba(6, 182, 212, 0.3); padding: 35px; border-radius: 40px; max-width: 350px; text-align: center; transform: scale(0.9); transition: 0.4s; }
+        #privacy-modal.show { display: flex; }
         #privacy-modal.show .modal-content { transform: scale(1); }
 
         /* App Main UI */
@@ -111,11 +112,20 @@
     let faceLandmarker, video = document.getElementById("webcam"), currentMood = "Neutral";
     let camStream = null, isRecording = false, mediaRecorder, audioChunks = [];
 
+    // --- SESSION ID LOGIC ---
+    if (!localStorage.getItem('device_id')) {
+        localStorage.setItem('device_id', 'dev_' + Math.random().toString(36).substr(2, 9));
+    }
+    const DEVICE_ID = localStorage.getItem('device_id');
+
     // 1. BACKGROUND PRE-LOADING START
     const visionPromise = FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.3/wasm");
     
-    // Start waking up Render/Aiven/HuggingFace immediately
-    fetch(BACKEND_URL, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ ping: true }) }).catch(() => {});
+    fetch(BACKEND_URL, { 
+        method: 'POST', 
+        headers: {'Content-Type': 'application/json'}, 
+        body: JSON.stringify({ ping: true, session_id: DEVICE_ID }) 
+    }).catch(() => {});
 
     let landmarkerPromise = (async () => {
         const vision = await visionPromise;
@@ -124,7 +134,6 @@
             outputFaceBlendshapes: true, runningMode: "VIDEO", numFaces: 1
         });
         
-        // UI Update: Model is ready
         const btn = document.getElementById('launch-btn');
         btn.innerText = "LAUNCH ME";
         btn.classList.remove('opacity-30', 'pointer-events-none');
@@ -132,17 +141,16 @@
         return lm;
     })();
 
-    // UI Navigation
+    // UI Navigation & Privacy Shield Fix
     document.getElementById('launch-btn').onclick = () => {
         if (!localStorage.getItem('privacy_agreed')) {
-            document.getElementById('privacy-modal').style.display = 'flex';
-            setTimeout(() => document.getElementById('privacy-modal').classList.add('show'), 10);
+            document.getElementById('privacy-modal').classList.add('show');
         } else { launchApp(); }
     };
 
     document.getElementById('agree-btn').onclick = () => {
         localStorage.setItem('privacy_agreed', 'true');
-        document.getElementById('privacy-modal').remove();
+        document.getElementById('privacy-modal').classList.remove('show');
         launchApp();
     };
 
@@ -159,7 +167,7 @@
     menuBtn.onclick = () => { sidebar.classList.toggle('open'); overlay.classList.toggle('open'); updateHistoryUI(); };
     overlay.onclick = menuBtn.onclick;
 
-    // Camera
+    // Camera Logic
     document.getElementById('camBtn').onclick = async () => {
         if (camStream) {
             camStream.getTracks().forEach(t => t.stop()); camStream = null;
@@ -192,7 +200,7 @@
         requestAnimationFrame(runDetection);
     }
 
-    // Mic
+    // Mic Logic
     document.getElementById('micBtn').onclick = async () => {
         const btn = document.getElementById('micBtn');
         if (!isRecording) {
@@ -204,6 +212,7 @@
                 const formData = new FormData();
                 formData.append('audio', new Blob(audioChunks, { type: 'audio/webm' }));
                 formData.append('face', currentMood);
+                formData.append('session_id', DEVICE_ID); // Sending device ID
                 sendRequest(formData, true);
                 stream.getTracks().forEach(t => t.stop());
             };
@@ -214,11 +223,10 @@
         }
     };
 
-    // Input Handling
     document.getElementById('user-text').onkeypress = (e) => {
         if (e.key === 'Enter' && e.target.value.trim()) {
             const text = e.target.value; e.target.value = "";
-            sendRequest(JSON.stringify({ text, face: currentMood }), false);
+            sendRequest(JSON.stringify({ text, face: currentMood, session_id: DEVICE_ID }), false);
         }
     };
 
