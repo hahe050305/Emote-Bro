@@ -14,6 +14,7 @@ from mysql.connector import pooling
 load_dotenv()
 
 app = Flask(__name__)
+# Updated CORS to be more specific if needed, but keeping your broad access for testing
 CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # 1. DATABASE CONFIGURATION
@@ -76,19 +77,20 @@ def clean_ai_text(text):
 def analyze():
     db = get_db_connection()
     cursor = db.cursor(dictionary=True)
-    # Unique filename prevents crashes during multi-user access or quick testing
     temp_path = f"voice_{uuid.uuid4()}.webm"
     
     try:
         user_text, face_mood, voice_vibe = "", "Not Detected", "No Audio"
         
-        # A. INPUT HANDLING
+        # A. INPUT HANDLING & DEVICE IDENTIFICATION
         if request.is_json:
             data = request.json
             user_text = data.get('text', '').strip()
             face_mood = data.get('face', 'Neutral')
+            device_id = data.get('device_id', 'unknown_device') # Fetching device_id
         else:
             face_mood = request.form.get('face', 'Neutral')
+            device_id = request.form.get('device_id', 'unknown_device') # Fetching device_id
             if 'audio' in request.files:
                 audio_file = request.files['audio']
                 audio_file.save(temp_path)
@@ -99,14 +101,13 @@ def analyze():
                         model="whisper-large-v3",
                         language="en"
                     )
-                    # Corrected to .text for Groq API compliance
                     user_text = transcription.text.strip()
                 if os.path.exists(temp_path): os.remove(temp_path)
 
         if not user_text and face_mood in ["Neutral", "Not Detected"]:
             return jsonify({"advice": "I'm listening. Whenever you're ready to share."})
 
-        # B. THE EXACT INTEGRATED AFFECTIVE LOGIC MATRIX
+        # B. THE EXACT INTEGRATED AFFECTIVE LOGIC MATRIX (UNCHANGED)
         text_sentiment = get_text_sentiment(user_text)
         neg_ems = ['sadness', 'fear', 'anger']
         pos_ems = ['joy', 'love', 'surprise']
@@ -117,38 +118,37 @@ def analyze():
                 masking_note = "The Brave Face: Smiling through pain/minimizing a problem."
             else:
                 masking_note = "Pure Congruence: Genuine joy or success."
-        
         elif face_mood == "Sad":
             if text_sentiment in pos_ems:
                 masking_note = "The Faked Fine: Saying 'I'm okay' but looks visibly hurt or defeated."
             else:
                 masking_note = "Total Distress: Overwhelmed and not trying to hide it."
-        
         elif face_mood == "Frustrated":
             if text_sentiment in pos_ems:
                 masking_note = "Sarcastic/Cynical: Saying something 'good' but looking annoyed."
             else:
                 masking_note = "Vent Mode: High energy, aggressive or annoyed venting."
-        
         elif face_mood == "Surprised":
             if text_sentiment in pos_ems:
                 masking_note = "Excitement/Shock: Something unexpected but good has happened."
             else:
                 masking_note = "Stunned/Disbelief: Reeling from bad news or a sudden setback."
 
-        # C. HISTORY & SPIRAL DETECTION
-        cursor.execute("SELECT is_positive FROM vibe_history ORDER BY timestamp DESC LIMIT 3")
+        # C. DEVICE-SPECIFIC HISTORY & SPIRAL DETECTION
+        # Filtering by device_id ensures history doesn't mix between phones
+        cursor.execute("SELECT is_positive FROM vibe_history WHERE device_id = %s ORDER BY timestamp DESC LIMIT 3", (device_id,))
         history = cursor.fetchall()
         is_spiral = len(history) >= 3 and all(h['is_positive'] == 0 for h in history)
         
         recall_win = ""
         if is_spiral:
-            cursor.execute("SELECT user_text FROM vibe_history WHERE is_positive = 1 ORDER BY RAND() LIMIT 1")
+            cursor.execute("SELECT user_text FROM vibe_history WHERE device_id = %s AND is_positive = 1 ORDER BY RAND() LIMIT 1", (device_id,))
             past = cursor.fetchone()
             if past: recall_win = f"Remind them of a better time: '{past['user_text']}'."
 
         # D. EXACT SYSTEM PROMPT (Friend Persona)
-        cursor.execute("SELECT user_text, ai_response FROM vibe_history ORDER BY timestamp DESC LIMIT 2")
+        # Context is now device-isolated
+        cursor.execute("SELECT user_text, ai_response FROM vibe_history WHERE device_id = %s ORDER BY timestamp DESC LIMIT 2", (device_id,))
         chat_context = " | ".join([f"U: {c['user_text']} A: {c['ai_response']}" for c in reversed(cursor.fetchall())])
 
         system_prompt = (
@@ -167,12 +167,13 @@ def analyze():
         )
         advice = clean_ai_text(response.choices[0].message.content)
 
-        # F. DATABASE UPDATE
+        # F. DATABASE UPDATE (Now includes device_id)
         is_pos = (text_sentiment in pos_ems) and (face_mood not in ["Sad", "Frustrated", "Angry"])
-        cursor.execute(
-            "INSERT INTO vibe_history (timestamp, user_text, ai_response, mood_detected, is_positive) VALUES (%s, %s, %s, %s, %s)",
-            (datetime.now(), user_text, advice, f"F:{face_mood}/V:{voice_vibe}/T:{text_sentiment}", 1 if is_pos else 0)
+        query = (
+            "INSERT INTO vibe_history (timestamp, user_text, ai_response, mood_detected, is_positive, device_id) "
+            "VALUES (%s, %s, %s, %s, %s, %s)"
         )
+        cursor.execute(query, (datetime.now(), user_text, advice, f"F:{face_mood}/V:{voice_vibe}/T:{text_sentiment}", 1 if is_pos else 0, device_id))
         db.commit()
 
         return jsonify({
