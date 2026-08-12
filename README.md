@@ -67,3 +67,8 @@ Emote Bro was designed with the principle of **Zero-Retention Biometrics**.
 * No images are sent to the server.
 * Only the *name* of the detected emotion (e.g., "Happy") is transmitted for processing.
 * Memory Bank entries can be wiped instantly by the user.
+
+## 🌎 Live Demo
+
+https://drive.google.com/file/d/1bsbHnRX6ycc5x5cBvqzfDOBOKmTzYd3v/view?usp=drive_link
+
