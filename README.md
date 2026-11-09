@@ -12,12 +12,12 @@
 ## 📊 Performance vs. Default Apps
     We built Emote Bro to be lighter and faster than industry standards.
 
-| Feature | Default Emotion Apps | **Emote Bro** 
-| :--- | :--- | :--- | :--- |
-| **Response Latency** | 3.5s - 5.0s | **1.2s - 1.8s**
-| **Input Channels** | Text Only | **Vision + Voice + Text** 
-| **RAM Usage** | 1.2GB+ (Local) | **< 450MB (Optimized)** 
-| **Jitter Stability** | High (Flickering UI) | **Stable (Vote Buffer)** 
+| Feature | Default Emotion Apps | **Emote Bro** |
+| :--- | :--- | :--- |
+| **Response Latency** | 3.5s – 5.0s | **1.2s – 1.8s** |
+| **Input Channels** | Text Only | **Vision + Voice + Text** |
+| **RAM Usage** | 1.2GB+ (Local) | **< 450MB (Optimized)** |
+| **Jitter Stability** | High (Flickering UI) | **Stable (Vote Buffer)** |
 
 
 ## ✨ Unique Features
