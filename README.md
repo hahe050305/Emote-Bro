@@ -14,10 +14,10 @@
 
 | Feature | Default Emotion Apps | **Emote Bro (Pro)** | Improvement |
 | :--- | :--- | :--- | :--- |
-| **Response Latency** | 3.5s - 5.0s | **1.2s - 1.8s** | ⚡ **65% Faster** |
-| **Input Channels** | Text Only | **Vision + Voice + Text** | 🛠️ **3x Context** |
-| **RAM Usage** | 1.2GB+ (Local) | **< 450MB (Optimized)** | 📉 **62% Leaner** |
-| **Jitter Stability** | High (Flickering UI) | **Stable (Vote Buffer)** |
+| **Response Latency** | 3.5s - 5.0s | **1.2s - 1.8s**
+| **Input Channels** | Text Only | **Vision + Voice + Text** 
+| **RAM Usage** | 1.2GB+ (Local) | **< 450MB (Optimized)** 
+| **Jitter Stability** | High (Flickering UI) | **Stable (Vote Buffer)** 
 
 
 ## ✨ Unique Features
