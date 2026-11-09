@@ -12,7 +12,7 @@
 ## 📊 Performance vs. Default Apps
     We built Emote Bro to be lighter and faster than industry standards.
 
-| Feature | Default Emotion Apps | **Emote Bro (Pro)** | Improvement |
+| Feature | Default Emotion Apps | **Emote Bro** 
 | :--- | :--- | :--- | :--- |
 | **Response Latency** | 3.5s - 5.0s | **1.2s - 1.8s**
 | **Input Channels** | Text Only | **Vision + Voice + Text** 
